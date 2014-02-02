@@ -1,0 +1,25 @@
+mysql:
+    host:     localhost
+    username: lemon_db
+    password: 2b21789cd0f4747a7604999c0b69fd0d
+    dbname:   lemon_db
+
+log:
+    enable: true
+    path:   /var/log/lemon/
+
+bookmakers:
+    Bwin:
+        base: http://sports.bwin.es/
+        odds:
+            three:
+                Futbol: es/sports/4/apuestas/f%c3%batbol
+            two:
+                Basket: es/sports/7/apuestas/baloncesto
+    Betfair:
+        base: http://sports.betfair.es/
+        odds:
+            three:
+                Futbol: football
+            two:
+                Basket: basketball

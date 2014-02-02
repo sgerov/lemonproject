@@ -1,0 +1,44 @@
+{
+    "name": "lemon/lemon",
+    "description": "Online betting analysis tool",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Sava Gerov",
+            "email": "sava@gerov.es",
+            "homepage": "http://gerov.es/"
+        },
+        {
+            "name": "Pau Gay",
+            "email": "pau.gay@gmail.com",
+            "homepage": "http://paugay.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "monolog/monolog": "1.7.*",
+        "fabpot/goutte": "1.0.*",
+        "twbs/bootstrap": "3.0.*",
+        "jquery/jquery":  "1.11.*",
+        "pimple/pimple": "1.0.*@dev",
+        "symfony/yaml": "2.2.*@dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "Lemon": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/jquery",
+                "version": "1.11.0",
+                "dist": {
+                    "url": "http://code.jquery.com/jquery-1.11.0.js",
+                    "type": "file"
+                }
+            }
+        }
+    ]
+}
