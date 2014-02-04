@@ -147,6 +147,8 @@ class Container extends \Pimple
                 $this["config"]["bookmakers"]["$bookmaker"]["odds"]
                 );
         }
+
+        // set bookmakers parsers
         $this['bookmakers'] = $bookmakersArray;
     }
 }

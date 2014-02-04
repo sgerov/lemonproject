@@ -20,11 +20,11 @@ class Lemon
     private $container;
 
     /**
-     * Odds Array
+     * Bets Array
      *
-     * An array containing all the requested odds.
+     * An array containing all the best we are aiming to.
      */
-    private $oddsArray;
+    private $betsArray;
 
     /**
      * Constructor
@@ -32,44 +32,21 @@ class Lemon
     public function __construct($env = NULL)
     {
         $this->container = new Container($env);
-        $this->oddsArray = array();
     }
 
     /**
-     * Get Odds
+     * Get Bets
      *
-     * Populate the array with all the odds of all bookmakers.
+     * This method will obtain the recommended bets for our concrete filter.
      *
-     * @param Array $selectedBookmakers Bookmakers we want to filter by
-     * @param Array $filters Doubles, triples or specific filters
+     * @param $bookmakers
+     * @param $filters
+     *
+     * @return Array
      */
-    public function getOdds($selectedBookmakers = NULL, $filters = NULL)
+    public function getBets($bookmakers, $filters)
     {
-        $bookmakers = $this->container['bookmakers'];
-
-        foreach ($selectedBookmakers as $bookmakerName) {
-            if (
-                array_key_exists(
-                    $bookmakerName,
-                    $this->container['config']['bookmakers']
-                )
-            )
-            {
-                $this->container["Logger"]->info("Getting '$bookmakerName' odds.");
-                switch ($filters) {
-                    case 'three':
-                        $this->oddsArray[$bookmakerName]["three"] = $bookmakers[$bookmakerName]->getTriples();
-                        break;
-                    case 'two':
-                        $this->oddsArray[$bookmakerName]["two"] = $bookmakers[$bookmakerName]->getDoubles();
-                        break;
-                    default:
-                        $this->oddsArray[$bookmakerName]["two"] = $bookmakers[$bookmakerName]->getDoubles();
-                        break;
-                }
-                $this->container["Logger"]->info("'$bookmakerName' odds obtained.");
-                var_dump($this->oddsArray[$bookmakerName]["two"]); die;
-            }
-        }
+        //TODO
+        return array();
     }
 }

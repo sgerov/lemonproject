@@ -1,10 +1,8 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Lemon\Lemon;
-
-$lemon = new Lemon();
-$lemon->getOdds(Array("Pinnacle"), "two");
+$lemon = new Lemon\Expert();
+$lemon->getOdds(Array("Bwin"), "two");
 ?>
 <html>
 <head>

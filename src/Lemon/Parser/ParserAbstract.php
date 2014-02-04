@@ -91,7 +91,6 @@ abstract class ParserAbstract
      */
     public function requestOdds($uriList)
     {
-        // get all two-outcome odds
         foreach ($uriList['two'] as $sport => $uri)
         {
             $this->webRequests['two'][$sport] = $this->client->request(
@@ -101,13 +100,13 @@ abstract class ParserAbstract
         }
 
         // get all three-outcome odds
-        foreach ($uriList['three'] as $sport => $uri)
-        {
-            $this->webRequests['three'][$sport] = $this->client->request(
-                'GET',
-                $this->baseUrl . $uri
-            );
-        }
+        // foreach ($uriList['three'] as $sport => $uri)
+        // {
+        //     $this->webRequests['three'][$sport] = $this->client->request(
+        //         'GET',
+        //         $this->baseUrl . $uri
+        //     );
+        // }
     }
 
     /**
