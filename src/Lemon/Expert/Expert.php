@@ -9,7 +9,7 @@
  * @author Sava Gerov <sava@gerov.es>
  */
 
-namespace Lemon;
+namespace Lemon\Expert;
 
 class Expert
 {
