@@ -89,7 +89,7 @@ abstract class ParserAbstract
      * Function that will download the necessary web pages in order to retrieve
      * the odds
      */
-    function requestOdds($uriList)
+    public function requestOdds($uriList)
     {
         // get all two-outcome odds
         foreach ($uriList['two'] as $sport => $uri)
@@ -108,5 +108,39 @@ abstract class ParserAbstract
                 $this->baseUrl . $uri
             );
         }
+    }
+
+    /**
+     * Convert Odds
+     *
+     * Odds are represented in different way across bookmakers. This method
+     * will help to translate those to the common decimal format.
+     *
+     * @param $odds Float
+     * @param $format String
+     *
+     * @return Float
+     */
+    protected function convertOdds($odds, $format)
+    {
+        switch ($format)
+        {
+            case 'us':
+                if ($odds <= -100)
+                {
+                    $returnValue = 1 - (100 / $odds);
+                }
+                else
+                {
+                    $returnValue = 1 + ($odds / 100);
+                }
+                break;
+
+            default:
+                    $returnValue = NULL;
+                break;
+        }
+
+        return $returnValue;
     }
 }

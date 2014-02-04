@@ -59,18 +59,6 @@ class Parser
      */
     public function getTriples()
     {
-        foreach ($this->webRequests["three"] as $sport => $request)
-        {
-            return array(
-                $sport
-                =>
-                $request->filter('.col3.three-way')->each(function ($threeRow) {
-                    return $threeRow->filter('td form button span')
-                            ->each(function ($one) {
-                                return $one->text();
-                    });
-                })
-            );
-        }
+        //TODO
     }
 }

@@ -23,3 +23,10 @@ bookmakers:
                 Futbol: football
             two:
                 Basket: basketball
+    Pinnacle:
+        base: http://xml.pinnaclesports.com/pinnacleFeed.aspx?sportType=
+        odds:
+            three:
+                Futbol: Soccer
+            two:
+                Basket: Basketball
