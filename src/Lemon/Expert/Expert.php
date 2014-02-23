@@ -35,12 +35,13 @@ class Expert
     {
         $this->container = new \Lemon\Container($env);
         $this->oddsArray = array();
+        $this->getOdds(Array("Bwin", "Betfair", "Pinnacle"), "two");
     }
 
     /**
      * Get Odds
      *
-     * Populate the array with all the odds of all bookmakers.
+     * Populate the array with all the odds of requested bookmakers.
      *
      * @param Array $selectedBookmakers Bookmakers we want to filter by
      * @param String $filters Doubles, triples or specific filters
@@ -57,21 +58,164 @@ class Expert
                 )
             )
             {
-                $this->container["Logger"]->info("Getting '$bookmakerName' odds.");
+                $this->container["Logger"]->info(
+                    "Getting '$bookmakerName' odds."
+                );
+
                 switch ($filters) {
                     case 'three':
-                        $this->oddsArray[$bookmakerName]["three"] = $bookmakers[$bookmakerName]->getTriples();
+                        $this->oddsArray[$bookmakerName]["three"] =
+                            $bookmakers[$bookmakerName]->getTriples();
                         break;
                     case 'two':
-                        $this->oddsArray[$bookmakerName]["two"] = $bookmakers[$bookmakerName]->getDoubles();
+                        $this->oddsArray[$bookmakerName]["two"] =
+                            $bookmakers[$bookmakerName]->getDoubles();
                         break;
                     default:
-                        $this->oddsArray[$bookmakerName]["two"] = $bookmakers[$bookmakerName]->getDoubles();
+                        $this->oddsArray[$bookmakerName]["two"] =
+                            $bookmakers[$bookmakerName]->getDoubles();
                         break;
                 }
                 $this->container["Logger"]->info("'$bookmakerName' odds obtained.");
-                var_dump($this->oddsArray[$bookmakerName]["two"]); die;
             }
         }
+    }
+
+    /**
+     * Find arbitratge
+     *
+     * Discover arbitratge situations for the filter set.
+     *
+     * @return Array Proposed arbs
+     */
+    public function findArbitratge()
+    {
+        // get selected bookmakers
+        $selectedbookmakers = array_keys($this->oddsArray);
+
+        $visited = $arbs = array();
+
+        // compare all bookmakers
+        foreach ($this->oddsArray as $keyFrom => $bookmakerfrom)
+        {
+            // with all non-visited ones
+            foreach ($this->oddsArray as $keyTo => $bookmakerto)
+            {
+                if (!in_array($keyTo, $visited) && $keyFrom != $keyTo)
+                {
+                    $this->container["Logger"]->info("Comparing '$keyFrom' odds with '$keyTo' odds..");
+                    $arbs[] = $this->selectCandidates($keyFrom, $keyTo);
+                }
+            }
+            $visited[] = $keyFrom;
+        }
+
+        return $arbs;
+    }
+
+    /**
+     * Select candidates
+     *
+     * Select arbitratge candidates.
+     *
+     * @param String $keyFrom
+     * @param String $keyTo
+     *
+     * @return Array Array of candidates
+     */
+    private function selectCandidates($keyFrom, $keyTo)
+    {
+        $candidates = array();
+
+        foreach ($this->oddsArray[$keyFrom]["two"] as $sportKey => $sportFrom)
+        {
+            $match = 0;
+            $this->container["Logger"]->info("Analyzing '$sportKey'["
+                . count($this->oddsArray[$keyFrom]["two"][$sportKey]) . ' -> '
+                . count($this->oddsArray[$keyTo]["two"][$sportKey]) . ']'
+                );
+            // loop through all sports
+            foreach ($sportFrom as $oddFrom)
+            {
+                // odd by odd
+                foreach ($this->oddsArray[$keyTo]["two"][$sportKey] as $oddTo)
+                {
+                    $distance = levenshtein($oddFrom[1], $oddTo[1]);
+                    if ($distance <= min(4, strlen($oddFrom[1]), strlen($oddTo[3])))
+                    {
+                        $distance = levenshtein($oddFrom[3], $oddTo[3]);
+                    }
+
+                    if ($distance <= min(4, strlen($oddFrom[1]), strlen($oddTo[3])))
+                    {
+                        // strings are at least 70% equal, it's the same event
+                        $optionsArray = array(
+                            1 - ((1/(float) $oddFrom[0]) + (1/(float) $oddTo[2])),
+                            1 - ((1/(float) $oddTo[0]) + (1/(float) $oddFrom[2])),
+                            1 - ((1/(float) $oddFrom[2]) + (1/(float) $oddTo[0])),
+                            1 - ((1/(float) $oddTo[2]) + (1/(float) $oddFrom[0]))
+                        );
+
+                        // look for best award
+                        $maxValue = max($optionsArray);
+                        $maxKey = array_search($maxValue, $optionsArray);
+                        if ($maxValue >= 0)
+                        {
+                            $match++;
+                            if ($maxValue > 0.2)
+                            {
+                                echo 'MAXVALUE ($maxValue)<br>';
+                                var_dump($oddFrom);
+                                echo '<br>';
+                                var_dump($oddTo);
+                                echo '<hr>';
+                            }
+
+                            switch ($maxKey)
+                            {
+                                case 0:
+                                    $nextCandidate = array(
+                                        $keyFrom => $oddFrom[1],
+                                        $keyTo   => $oddTo[3]
+                                    );
+                                    break;
+
+                                case 1:
+                                    $nextCandidate = array(
+                                        $keyTo => $oddTo[1],
+                                        $keyFrom   => $oddFrom[3]
+                                    );
+                                    break;
+
+                                case 2:
+                                    $nextCandidate = array(
+                                        $keyFrom => $oddFrom[3],
+                                        $keyTo   => $oddTo[1]
+                                    );
+                                    break;
+
+                                case 3:
+                                    $nextCandidate = array(
+                                        $keyTo => $oddTo[3],
+                                        $keyFrom   => $oddFrom[1]
+                                    );
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            $candidates[] = array(
+                                "odd"  => $maxValue,
+                                "info" => $nextCandidate
+                            );
+                        }
+                    }
+                }
+            }
+            $this->container["Logger"]->info("$match eventos emparejados.");
+        }
+
+        return $candidates;
     }
 }

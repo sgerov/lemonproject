@@ -27,10 +27,8 @@ class Parser
     {
         foreach ($this->webRequests["two"] as $sport => $request)
         {
-            return array(
-                $sport
-                =>
-                $request->filter('tbody.market')->each(function ($threeRow) {
+            $return[$sport] =
+                array_filter($request->filter('tbody.market')->each(function ($threeRow) {
                     $home = $threeRow->filter('span.home-team');
                     $away = $threeRow->filter('span.away-team');
                     $homeBet = $threeRow->filter('td.selection-1 button span')->first();
@@ -38,15 +36,15 @@ class Parser
                     if(count($homeBet) && count($awayBet) && count($home) && count($away))
                     {
                         return array(
-                            $homeBet->html(),
+                            (float) $homeBet->html(),
                             $home->html(),
-                            $awayBet->html(),
+                            (float) $awayBet->html(),
                             $away->html()
                         );
                     }
-                })
-            );
+                }));
         }
+        return $return;
     }
 
     /**

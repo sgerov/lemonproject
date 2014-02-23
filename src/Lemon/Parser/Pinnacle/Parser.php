@@ -28,9 +28,7 @@ class Parser
         foreach ($this->webRequests["two"] as $sport => $request)
         {
             $participants = $odds = array();
-            return array(
-                $sport
-                =>
+            $return[$sport] =
                 array_filter($request->filter('events event')->each(function ($event) {
                     $participants = $event->filter('participants participant')->each( function ($participant) {
                         return $participant->filter('participant_name')->text();
@@ -39,8 +37,16 @@ class Parser
                     $odd = $event->filter('periods period moneyline');
                     if (count($odd))
                     {
-                        $odds[0] = $odd->filter('moneyline_home')->text();
-                        $odds[1] = $odd->filter('moneyline_visiting')->text();
+                        if ($event->filter('participants participant visiting_home_draw')->text() == "Visiting")
+                        {
+                            $odds[0] = $odd->filter('moneyline_visiting')->text();
+                            $odds[1] = $odd->filter('moneyline_home')->text();
+                        }
+                        else
+                        {
+                            $odds[0] = $odd->filter('moneyline_home')->text();
+                            $odds[1] = $odd->filter('moneyline_visiting')->text();
+                        }
                     }
                     if(count($odd) && $participants[0] && $participants[1])
                     {
@@ -55,9 +61,10 @@ class Parser
                     {
                         return false;
                     }
-                }))
-            );
+                }));
         }
+
+        return $return;
     }
 
     /**

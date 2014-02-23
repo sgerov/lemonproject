@@ -13,20 +13,23 @@ bookmakers:
         base: http://sports.bwin.es/
         odds:
             three:
-                Futbol: es/sports/4/apuestas/f%c3%batbol
+                Football: es/sports/4/apuestas/f%c3%batbol
             two:
                 Basket: es/sports/7/apuestas/baloncesto
+                Tennis: es/sports/5/apuestas/tenis
     Betfair:
         base: http://sports.betfair.es/
         odds:
             three:
-                Futbol: football
+                Football: football
             two:
                 Basket: basketball
+                Tennis: tennis
     Pinnacle:
         base: http://xml.pinnaclesports.com/pinnacleFeed.aspx?sportType=
         odds:
             three:
-                Futbol: Soccer
+                Football: Soccer
             two:
                 Basket: Basketball
+                Tennis: Tennis

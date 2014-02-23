@@ -27,17 +27,15 @@ class Parser
     {
         foreach ($this->webRequests["two"] as $sport => $request)
         {
-            return array(
-                $sport
-                =>
+            $return[$sport] =
                 $request->filter('tr.colx ')->each(function ($threeRow) {
                     return $threeRow->filter('td form button span')
                         ->each(function ($one) {
                             return $one->text();
                     });
-                })
-            );
+                });
         }
+        return $return;
     }
 
     /**
