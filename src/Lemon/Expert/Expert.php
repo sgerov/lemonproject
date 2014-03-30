@@ -148,6 +148,8 @@ class Expert
 
                     if ($distance <= min(4, strlen($oddFrom[1]), strlen($oddTo[3])))
                     {
+                        $match++;
+
                         // strings are at least 70% equal, it's the same event
                         $optionsArray = array(
                             1 - ((1/(float) $oddFrom[0]) + (1/(float) $oddTo[2])),
@@ -159,9 +161,8 @@ class Expert
                         // look for best award
                         $maxValue = max($optionsArray);
                         $maxKey = array_search($maxValue, $optionsArray);
-                        if ($maxValue >= 0)
+                        if ($maxValue >= 0.01)
                         {
-                            $match++;
                             if ($maxValue > 0.2)
                             {
                                 echo 'MAXVALUE ($maxValue)<br>';
